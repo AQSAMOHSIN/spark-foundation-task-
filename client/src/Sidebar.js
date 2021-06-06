@@ -111,7 +111,7 @@ const Sidebar = () => {
         </div>
         <hr />
         <div>
-          <form className="money_transfer">
+          <form className="money_transfer" onSubmit={(e) => e.preventDefault()}>
             <label htmlFor="money_tranfer_to">
               <h3 style={{ display: "inline-block" }}>TO:</h3>
             </label>

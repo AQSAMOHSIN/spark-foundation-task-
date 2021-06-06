@@ -35,7 +35,7 @@ const Customers = () => {
     <>
       <div className="customers cover">
         <h2>CUSTOMERS#</h2>
-        <form>
+        <form onSubmit={(e) => e.preventDefault()}>
           <input
             type="text"
             className="search"
