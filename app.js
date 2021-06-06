@@ -11,6 +11,9 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+app.get("/", (req, res) => {
+  res.send("hello thisis myt app ");
+});
 app.get("/getAll", (req, res) => {
   const db = dbserver.getDbServiceInstance();
   const ans = db.getAllData("customers");
@@ -89,14 +92,13 @@ app.get("/search/:name", (request, response) => {
     .catch((err) => console.log(err));
 });
 
-
-const PORT=process.env.PORT || 5000
-if(process.env.NODE_ENV=="production"){
-  app.use(express.static('client/build'))
-  const path=require("path");
-  app.get("*",(req,res)=>{
-    res.sendFile(path.resolve(__dirname,"client","build","index.html"))
-  })
+const PORT = process.env.PORT || 5000;
+if (process.env.NODE_ENV == "production") {
+  app.use(express.static("client/build"));
+  const path = require("path");
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
+  });
 }
 app.listen(PORT, (req, res) => {
   console.log("running server ...");
