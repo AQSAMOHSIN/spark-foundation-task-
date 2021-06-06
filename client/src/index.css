@@ -549,7 +549,6 @@ tr {
 table {
   align-self: flex-start;
   width: 90vw;
-  margin-top: -5rem;
 }
 
 .amount_transfer {

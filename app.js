@@ -11,9 +11,6 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.get("/", (req, res) => {
-  res.send("hello thisis myt app ");
-});
 app.get("/getAll", (req, res) => {
   const db = dbserver.getDbServiceInstance();
   const ans = db.getAllData("customers");
