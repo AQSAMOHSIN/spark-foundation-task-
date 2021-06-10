@@ -8,7 +8,7 @@ const Customers = () => {
   const [searchValue, setSearchValue] = useState("");
 
   const fetchCustomers = () => {
-    fetch("http://localhost:5000/getAll")
+    fetch("https://aqsa-grip-task.herokuapp.com/getAll")
       .then((response) => response.json())
       .then((data) => {
         setAllCustomersData(data["data"]);
@@ -18,7 +18,7 @@ const Customers = () => {
 
   const search = () => {
     if (searchValue) {
-      fetch("http://localhost:5000/search/" + searchValue)
+      fetch("https://aqsa-grip-task.herokuapp.com/search/" + searchValue)
         .then((response) => response.json())
         .then((data) => setCustomers(data["data"]));
       setSearchValue("");

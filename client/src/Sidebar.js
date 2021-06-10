@@ -15,7 +15,7 @@ const Sidebar = () => {
   const [amount_transfer, setamount_transfer] = useState(0);
   const [receiver_name, setreceiver_name] = useState("");
   const fetchAllCustomers = () => {
-    fetch("http://localhost:5000/getAll")
+    fetch("https://aqsa-grip-task.herokuapp.com/getAll")
       .then((response) => response.json())
       .then((data) => setAllCustomersData(data["data"]));
   };
@@ -43,7 +43,7 @@ const Sidebar = () => {
         amount_transfer,
       };
 
-      fetch("http://localhost:5000/putdata", {
+      fetch("https://aqsa-grip-task.herokuapp.com/putdata", {
         headers: {
           "Content-type": "application/json",
         },
@@ -76,7 +76,7 @@ const Sidebar = () => {
     const receiver_newBalance =
       parseInt(receiver_balance, 10) + parseInt(amount_transfer, 10);
     const sender_newBalance = sender_balance - amount_transfer;
-    fetch("http://localhost:5000/update", {
+    fetch("https://aqsa-grip-task.herokuapp.com//update", {
       method: "PATCH",
       headers: {
         "Content-type": "application/json",

@@ -4,7 +4,7 @@ const Transaction = () => {
   const { allTransactions, setAllTransactions } = useGlobalContext();
 
   const fetchtransaction = () => {
-    fetch("http://localhost:5000/getAllT")
+    fetch("https://aqsa-grip-task.herokuapp.com/getAllT")
       .then((response) => response.json())
       .then((data) => setAllTransactions(data["data"]));
   };
