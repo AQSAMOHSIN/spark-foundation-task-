@@ -1,35 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useGlobalContext } from "./context";
-
 const Customers = () => {
-  const { allCustomersData, setAllCustomersData } = useGlobalContext();
-  const [customers, setCustomers] = useState([]);
+  const { allCustomersData } = useGlobalContext();
+  const [customers, setCustomers] = useState(allCustomersData);
   const [searchValue, setSearchValue] = useState("");
-
-  const fetchCustomers = () => {
-    fetch("https://aqsa-grip-task.herokuapp.com/getAll")
-      .then((response) => response.json())
-      .then((data) => {
-        setAllCustomersData(data["data"]);
-        return setCustomers(data["data"]);
-      });
-  };
 
   const search = () => {
     if (searchValue) {
-      fetch("https://aqsa-grip-task.herokuapp.com/search/" + searchValue)
-        .then((response) => response.json())
-        .then((data) => setCustomers(data["data"]));
+      const newcus = allCustomersData.filter((cus) => {
+        return cus.name.toLowerCase().startsWith(searchValue.toLowerCase());
+      });
+      setCustomers(newcus);
       setSearchValue("");
     }
     if (!searchValue) {
       setCustomers(allCustomersData);
     }
   };
+
   useEffect(() => {
-    fetchCustomers();
-  }, []);
+    setCustomers(allCustomersData);
+  }, [allCustomersData]);
 
   return (
     <>
@@ -50,17 +42,16 @@ const Customers = () => {
 
         {customers.map((customer) => {
           return (
-            <Link
-              to={`/customer/${customer.name}`}
-              key={customer.account_number}
-            >
-              <div className="item">
-                <h4>
-                  {customer.account_number}:{customer.name}
-                </h4>
-                <h4>{customer.balance}</h4>
-              </div>
-            </Link>
+            <div key={customer._id}>
+              <Link to={`/customer/${customer.name}`}>
+                <div className="item">
+                  <h4>
+                    {customer.account_number}:{customer.name}
+                  </h4>
+                  <h4>{customer.balance}</h4>
+                </div>
+              </Link>
+            </div>
           );
         })}
       </div>

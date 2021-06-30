@@ -1,17 +1,7 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useGlobalContext } from "./context";
 const Transaction = () => {
-  const { allTransactions, setAllTransactions } = useGlobalContext();
-
-  const fetchtransaction = () => {
-    fetch("https://aqsa-grip-task.herokuapp.com/getAllT")
-      .then((response) => response.json())
-      .then((data) => setAllTransactions(data["data"]));
-  };
-
-  useEffect(() => {
-    fetchtransaction();
-  }, []);
+  const { allTransactions } = useGlobalContext();
 
   return (
     <>
@@ -31,21 +21,16 @@ const Transaction = () => {
           </thead>
           <tbody>
             {allTransactions.map((transaction, index) => {
-              const {
-                Sender_name,
-                sender_Account_No,
-                receiver_name,
-                receiver_Account_NO,
-                amount_transfer,
-              } = transaction;
+              const { sender_Account_No, receiver_name, amount_transfer } =
+                transaction;
 
               return (
                 <tr key={index} className="items">
                   <td>{index + 1}</td>
-                  <td>{Sender_name}</td>
+                  <td>{transaction.sender_name}</td>
                   <td>{sender_Account_No}</td>
                   <td>{receiver_name}</td>
-                  <td>{receiver_Account_NO}</td>
+                  <td>{transaction.receiver_Account_No}</td>
                   <td>{amount_transfer}</td>
                 </tr>
               );

@@ -14,7 +14,9 @@ const Person = () => {
 
   useEffect(() => {
     fetchCustomer();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allCustomersData]);
+
   return (
     <div className="single-customer-container">
       <div className="single-customer">

@@ -1,5 +1,5 @@
-import React, { useState, useContext } from "react";
-
+import React, { useState, useContext, useEffect } from "react";
+import axios from "axios";
 const AppContext = React.createContext();
 
 export const AppProvider = ({ children }) => {
@@ -8,7 +8,6 @@ export const AppProvider = ({ children }) => {
   const [singleCustomer, setSingleCustomer] = useState({});
   const [allCustomersData, setAllCustomersData] = useState([]);
   const [allTransactions, setAllTransactions] = useState([]);
-
   const setAllTransactionsFunc = (transaction) => {
     setAllTransactions([...allTransactions, transaction]);
   };
@@ -26,9 +25,28 @@ export const AppProvider = ({ children }) => {
     return setIsSubmenuOpen(false);
   };
 
+  const fetchCustomers = async () => {
+    const response = await axios("http://localhost:5000/api/v1/customers");
+    const data = response.data;
+    setAllCustomersData(data);
+  };
+
+  const fetchtransaction = async () => {
+    const response = await axios("http://localhost:5000/api/v1/transactions");
+    const data = response.data;
+    setAllTransactions(data);
+  };
+
+  useEffect(() => {
+    fetchCustomers();
+    fetchtransaction();
+  }, [allCustomersData]);
+
   return (
     <AppContext.Provider
       value={{
+        fetchCustomers,
+        fetchtransaction,
         openSidebar,
         closeSidebar,
         openSubmenu,

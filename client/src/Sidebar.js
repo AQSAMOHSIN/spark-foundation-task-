@@ -1,74 +1,73 @@
 import React, { useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import { useGlobalContext } from "./context";
+import axios from "axios";
 
 const Sidebar = () => {
   const {
+    fetchCustomers,
     isSidebarOpen,
     closeSidebar,
     singleCustomer,
     allCustomersData,
-    setAllTransactionsFunc,
-    setAllCustomersData,
+    fetchtransaction,
   } = useGlobalContext();
-  const { account_number, balance, name, email } = singleCustomer;
+  const { _id, account_number, balance, name, email } = singleCustomer;
   const [amount_transfer, setamount_transfer] = useState(0);
-  const [receiver_name, setreceiver_name] = useState("");
-  const fetchAllCustomers = () => {
-    fetch("https://aqsa-grip-task.herokuapp.com/getAll")
-      .then((response) => response.json())
-      .then((data) => setAllCustomersData(data["data"]));
+  const [receiver_name, setreceiver_name] = useState("choose the receiver");
+
+  const fetch = () => {
+    return new Promise((resolve, reject) => {
+      allCustomersData.map((e) => {
+        if (e.name === receiver_name) {
+          resolve(e);
+        }
+        return e;
+      });
+    });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (amount_transfer > balance || 0 > balance) {
-      alert("Sorry ;( you don't have enough amount ");
+    if (receiver_name === "choose the receiver") {
+      alert("kindly choose correct receiver ");
     } else {
-      const receiver = allCustomersData.find(
-        (e) => e.name.toLowerCase() === receiver_name.toLowerCase()
-      );
-      const receiver_Account_No = receiver.account_number;
-      const sender_name = name;
-      const sender_Account_No = account_number;
-      const receiver_balance = receiver.balance;
-      const sender_balance = balance;
+      if (amount_transfer > balance || 0 > balance) {
+        alert("Sorry ;( you don't have enough amount ");
+      } else {
+        const receiver = await fetch();
+        const receiver_Account_No = receiver.account_number;
+        const sender_name = name;
+        const sender_Account_No = account_number;
+        const receiver_balance = receiver.balance;
+        const sender_balance = balance;
 
-      const ans = {
-        sender_Account_No,
-        sender_name,
-        receiver_Account_No,
-        receiver_name,
-        amount_transfer,
-      };
+        const ans = {
+          sender_Account_No,
+          sender_name,
+          receiver_Account_No,
+          receiver_name,
+          amount_transfer,
+        };
 
-      fetch("https://aqsa-grip-task.herokuapp.com/putdata", {
-        headers: {
-          "Content-type": "application/json",
-        },
-        method: "POST",
-        body: JSON.stringify(ans),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          return setAllTransactionsFunc(data["data"]);
-        });
-      updateBalance(
-        sender_Account_No,
-        receiver_Account_No,
-        amount_transfer,
-        receiver_balance,
-        sender_balance
-      );
-      alert("amount tranfered");
-      closeSidebar();
+        await axios.post("http://localhost:5000/api/v1/transactions", ans);
+        fetchtransaction();
+
+        updateBalance(
+          receiver,
+          amount_transfer,
+          receiver_balance,
+          sender_balance
+        );
+        alert("amount tranfered");
+        fetchCustomers();
+        closeSidebar();
+      }
     }
   };
 
-  const updateBalance = (
-    sender_Account_No,
-    receiver_Account_No,
+  const updateBalance = async (
+    receiver,
     amount_transfer,
     receiver_balance,
     sender_balance
@@ -76,20 +75,14 @@ const Sidebar = () => {
     const receiver_newBalance =
       parseInt(receiver_balance, 10) + parseInt(amount_transfer, 10);
     const sender_newBalance = sender_balance - amount_transfer;
-    fetch("https://aqsa-grip-task.herokuapp.com//update", {
-      method: "PATCH",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify({
-        sender_Account_No,
-        receiver_Account_No,
-        receiver_newBalance,
-        sender_newBalance,
-      }),
-    })
-      .then((response) => response.json())
-      .then(fetchAllCustomers());
+
+    await axios.patch(
+      `http://localhost:5000/api/v1/customers/${receiver._id}`,
+      { balance: receiver_newBalance }
+    );
+    await axios.patch(`http://localhost:5000/api/v1/customers/${_id}`, {
+      balance: sender_newBalance,
+    });
   };
 
   return (
@@ -130,7 +123,9 @@ const Sidebar = () => {
                     </option>
                   );
                 } else {
-                  return;
+                  return (
+                    <option key={account_number}>choose the receiver</option>
+                  );
                 }
               })}
             </select>
